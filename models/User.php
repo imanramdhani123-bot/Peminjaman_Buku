@@ -21,5 +21,19 @@ class User {
         }
         return false;
     }
+
+    public function register($nama_lengkap, $email, $password) {
+        // Encrypt password demi keamanan
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
+        $query = "INSERT INTO users (nama_lengkap, email, password) VALUES (:nama_lengkap, :email, :password)";
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(':nama_lengkap', $nama_lengkap);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashed_password);
+        
+        return $stmt->execute();
+    }
 }
 ?>
