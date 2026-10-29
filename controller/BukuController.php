@@ -51,7 +51,16 @@ class BukuController {
             exit;
         }
 
-        $bukuList = $bukuModel->getAll();
+        // =========================================================
+        // CEK APAKAH ADA PENCARIAN (CARI)
+        // =========================================================
+        if (isset($_GET['cari']) && !empty($_GET['cari'])) {
+            $keyword = $_GET['cari'];
+            $bukuList = $bukuModel->search($keyword); // Panggil fungsi search di model
+        } else {
+            $bukuList = $bukuModel->getAll(); // Jika tidak mencari, tampilkan semua
+        }
+
         $kategoriList = $bukuModel->getKategori();
         require 'views/buku/index.php';
     }

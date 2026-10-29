@@ -17,6 +17,18 @@
             <?php endif; ?>
         </div>
 
+        <!-- FORM PENCARIAN (Sudah Dirapikan & Tidak Melebar) -->
+        <div style="margin-bottom: 20px;">
+            <form action="index.php" method="GET" style="display: flex; align-items: center; gap: 8px; max-width: 400px;">
+                <input type="hidden" name="page" value="buku">
+                <input type="text" name="cari" value="<?= htmlspecialchars($_GET['cari'] ?? '') ?>" placeholder="Cari judul buku atau pengarang..." class="form-control" style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                <button type="submit" class="btn-primary" style="padding: 8px 16px; width: auto; cursor: pointer;">Cari</button>
+                <?php if (!empty($_GET['cari'])): ?>
+                    <a href="index.php?page=buku" class="btn-primary" style="background: #6b7280; padding: 8px 12px; text-decoration: none; display: inline-block; width: auto;">Reset</a>
+                <?php endif; ?>
+            </form>
+        </div>
+
         <div class="card-table">
             <table>
                 <thead>
@@ -64,6 +76,7 @@
                                 <?php endif; ?>
 
                                 <!-- Tombol Edit (Buka Modal Popup) -->
+                                <?php if (isset($_SESSION['user']) && ($_SESSION['user']['role'] === 'Admin' || $_SESSION['user']['role'] === 'Petugas')): ?>
                                 <button type="button" 
                                         onclick="openModalEdit('<?= $buku['id_buku'] ?>', '<?= htmlspecialchars($buku['judul_buku'], ENT_QUOTES) ?>', '<?= htmlspecialchars($buku['pengarang'], ENT_QUOTES) ?>', '<?= $buku['id_kategori'] ?>', '<?= $buku['tahun'] ?>')" 
                                         style="background-color: #161515; color: white; border: none; padding: 4px 8px; font-size: 12px; border-radius: 4px; cursor: pointer;">
@@ -77,6 +90,7 @@
                                          Hapus
                                     </button>
                                 </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

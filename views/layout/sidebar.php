@@ -13,6 +13,16 @@
                 📚 Peminjaman Buku
             </a>
         </li>
+
+        <!-- TAMBAHKAN MENU KELOLA ANGGOTA KHUSUS ADMIN DI SINI -->
+        <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'Admin'): ?>
+        <li>
+            <a href="index.php?page=user" class="<?= ($_GET['page'] ?? '') === 'user' ? 'active' : '' ?>">
+                👥 Kelola Anggota
+            </a>
+        </li>
+        <?php endif; ?>
+
         <li>
             <a href="index.php?page=logout" style="color: #ef4444;">
                 🚪 Keluar

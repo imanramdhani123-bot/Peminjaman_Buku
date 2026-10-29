@@ -35,5 +35,23 @@ class User {
         
         return $stmt->execute();
     }
+
+    // Mengambil seluruh data user untuk Kelola Anggota
+    public function getAllUser() {
+        $query = "SELECT * FROM users"; 
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==========================================
+    // FUNGSI HAPUS YANG SUDAH DIPERBAIKI
+    // ==========================================
+    public function deleteUser($id) {
+        $query = "DELETE FROM users WHERE id_user = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }
 ?>

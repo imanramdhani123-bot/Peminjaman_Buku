@@ -16,6 +16,22 @@ class Buku {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // ==========================================
+    // TAMBAHKAN FUNGSI PENCARIAN BUKU INI
+    // ==========================================
+    public function search($keyword) {
+        $query = "SELECT b.*, k.nama_kategori 
+                  FROM buku b 
+                  JOIN kategori k ON b.id_kategori = k.id_kategori 
+                  WHERE b.judul_buku LIKE :keyword OR b.pengarang LIKE :keyword 
+                  ORDER BY b.id_buku DESC";
+        $stmt = $this->conn->prepare($query);
+        $searchTerm = "%" . $keyword . "%";
+        $stmt->bindParam(':keyword', $searchTerm);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getKategori() {
         $query = "SELECT * FROM kategori";
         $stmt = $this->conn->prepare($query);
@@ -45,11 +61,9 @@ class Buku {
 
     // FUNGSI EDIT / UPDATE BUKU
     public function update($id_buku, $judul, $pengarang, $id_kategori, $tahun, $cover = null) {
-        // Jika cover baru diunggah, update beserta covernya
         if ($cover) {
             $query = "UPDATE buku SET judul_buku = :judul, pengarang = :pengarang, id_kategori = :kategori, tahun = :tahun, cover = :cover WHERE id_buku = :id_buku";
         } else {
-            // Jika cover tidak diganti, biarkan cover yang lama
             $query = "UPDATE buku SET judul_buku = :judul, pengarang = :pengarang, id_kategori = :kategori, tahun = :tahun WHERE id_buku = :id_buku";
         }
 
@@ -73,9 +87,8 @@ class Buku {
             $this->conn->beginTransaction();
 
             $tgl_pinjam = date('Y-m-d');
-            $tgl_jatuh_tempo = date('Y-m-d', strtotime('+7 days')); // Pengembalian 7 hari
+            $tgl_jatuh_tempo = date('Y-m-d', strtotime('+7 days'));
 
-            // 1. Catat ke tabel peminjaman
             $queryPinjam = "INSERT INTO peminjaman (id_user, id_buku, tgl_pinjam, tgl_jatuh_tempo, status) 
                             VALUES (:id_user, :id_buku, :tgl_pinjam, :tgl_jatuh_tempo, 'Dipinjam')";
             $stmt1 = $this->conn->prepare($queryPinjam);
@@ -85,7 +98,6 @@ class Buku {
             $stmt1->bindParam(':tgl_jatuh_tempo', $tgl_jatuh_tempo);
             $stmt1->execute();
 
-            // 2. Ubah status buku menjadi Dipinjam
             $queryBuku = "UPDATE buku SET status = 'Dipinjam' WHERE id_buku = :id_buku";
             $stmt2 = $this->conn->prepare($queryBuku);
             $stmt2->bindParam(':id_buku', $id_buku);
